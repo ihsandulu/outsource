@@ -1,7 +1,7 @@
 
         <!-- Footer-->
         <footer class="bg-light py-5">
-            <div class="container px-4 px-lg-5"><div class="small text-center text-muted">Copyright &copy; 2023 - Outsource</div></div>
+            <div class="container px-4 px-lg-5"><div class="small text-center text-white">Copyright &copy; 2023 - Outsource</div></div>
         </footer>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
         <!-- Bootstrap core JS-->
