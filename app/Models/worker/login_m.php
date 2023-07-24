@@ -13,6 +13,7 @@ class login_m extends core_m
                 $input[$e] = $this->request->getPost($e);
             }
         }
+        $input["store_id"] = 1;
 
         //file
         $user_ktp = $this->request->getFile('user_ktp');
@@ -151,7 +152,39 @@ class login_m extends core_m
         $builder->insert($input);
         // echo $this->db->getLastQuery();
         // die;
-        $member_id = $this->db->insertID();
+        $user_id = $this->db->insertID();
+
+        //Kirim Email//
+        $store=$this->db->table("store")->where("store_id","1")->get()->getRow();
+        $storepicture=$store->store_picture;
+        $storename=$store->store_name;
+        $store_image=base_url("images/store_picture/".$storepicture);
+        // dd($store_image);
+        $to = $input["user_email"];
+        $subject = "Registrasi Pencari Kerja (".$storename.")";
+        $message = "
+        <div style='margin-bottom:20px;'><img src='".$store_image."' style='width:100px;height:auto;'/></div>
+        <div>Halo ".$input["user_name"].". Selamat ya telah berhasil mendaftar sebagai Pencari Kerja.</div>
+        <div>Silahkan <a href=".base_url("passwordpekerja/".$user_id)." style='background-color:#1C881A; color:white;'>KLIK DI SINI</a> untuk membuat password.</div>
+        ";
+        
+        $email = \Config\Services::email();
+        $email->setTo($to);
+        $email->setFrom('qithycv@gmail.com', 'Confirm Registration');
+        
+        $email->setSubject($subject);
+        $email->setMessage($message);
+        if ($email->send()) 
+		{
+            $email = 'Email successfully sent';
+        } 
+		else 
+		{
+            $email = 'Email unsuccessfully!';
+            // $data = $email->printDebugger(['headers']);
+            // print_r($data);
+        }
+        //selesai kirim email//
 
         $data["message"] = "Insert Data Success";
         $data["sukses"] = "1";
@@ -245,5 +278,36 @@ class login_m extends core_m
 
         $this->session->setFlashdata('message', $data["hasil"]);
         return $data;
+    }
+
+    public function password()
+    {        
+        $data["sukses"] = "0";
+        return view('worker/password_v', $data);
+    }
+
+    public function addpassword()
+    {
+        foreach ($this->request->getPost() as $e => $f) {
+            if ($e != 'create' ) {
+                $input[$e] = $this->request->getPost($e);
+            }
+        }        
+        $input["store_id"] = 1;
+        $input["user_password"] = password_hash($input["user_password"], PASSWORD_DEFAULT);
+
+        // dd($input);
+        $where["user_id"]=$input["user_id"];
+        $builder = $this->db->table('user');
+        $builder->update($input,$where);
+        // echo $this->db->getLastQuery();
+        // die;
+        $user_id = $this->db->insertID();
+        
+
+        $data["message"] = "Insert Password Success.";
+        $data["sukses"] = "1";
+        return $data;
+
     }
 }

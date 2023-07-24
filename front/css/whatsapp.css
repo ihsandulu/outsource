@@ -1,0 +1,34 @@
+/* Chatbox Whatsapp */
+:root {
+--warna-background: #4dc247; /* Warna background header dan tombol chat */
+--warna-bg-chat: #f0f5fb;
+--warna-icon: #fff; /* Warna icon chat */
+--warna-text: #505050;
+--warna-text-alt: #989b9f;
+--lebar-chatbox: 320px;
+}
+
+svg{width: 22px;height: 22px;vertical-align: middle;fill: var(--warna-icon)}
+.chatMenu, .chatButton .svg-2{display: none}
+
+.chatButton{position: fixed;background-color: var(--warna-background);bottom: 20px;left: 20px;border-radius: 50px;z-index: 20;overflow: hidden;display: flex;align-items: center;justify-content: center;width: 50px;height: 50px;-webkit-transition: all .2s ease-out;transition: all .2s ease-out}
+.chatButton svg{margin: auto;fill: var(--warna-icon)}
+  
+.chatBox{position: fixed;bottom: 70px;left: 20px;width: var(--lebar-chatbox);-webkit-transition: all .2s ease-out;transition: all .2s ease-out;z-index: 21;opacity: 0;visibility: hidden;line-height: normal}
+.chatContent{border-radius: 15px;background-color: #fff;box-shadow: 0 5px 15px 0 rgba(0,0,0,.05);overflow: hidden}
+.chatHeader{position: relative;display: flex;align-items: center;padding: 15px 20px;background-color: var(--warna-background);overflow: hidden}
+.chatHeader svg{width: 32px;height: 32px;flex-shrink: 0;fill: var(--warna-icon)}
+.chatHeader .chatTitle{padding-left: 15px;font-size: 14px;color: var(--warna-icon)}
+.chatHeader .chatTitle span{font-size: 11.5px;display: block;line-height: 1.58em}
+  
+.chatText{display: flex;flex-wrap: wrap;margin: 25px 20px;font-size: 12px;color: var(--warna-text)}
+.chatText span{display: inline-block;margin-right: auto;padding: 10px 10px 10px 20px;background-color: var(--warna-bg-chat);border-radius: 3px 15px 15px}
+.chatText span:after{content: 'Just now';margin-left: 15px;font-size: 9px;color: var(--warna-text-alt)}
+.chatText .typing{margin: 15px 0 0 auto;padding: 10px 20px 10px 10px;border-radius: 15px 3px 15px 15px}
+.chatText .typing: after{display: none}
+  
+.chatStart{display: flex;align-items: center;margin-top: 15px;padding: 18px 20px;border-radius: 10px;background-color: #fff;overflow: hidden;font-size: 12px;color: var(--warna-text)}
+.chatMenu:checked + .chatButton{-webkit-transform: rotate(360deg);transform: rotate(360deg)}
+.chatMenu:checked + .chatButton .svg-1{display: none}
+.chatMenu:checked + .chatButton .svg-2{display: block}
+.chatMenu:checked ~ .chatBox{bottom: 90px;opacity: 1;visibility: visible}

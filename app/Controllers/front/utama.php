@@ -27,4 +27,9 @@ class utama extends baseController
         $this->session->setFlashdata("message", "Silahkan Login !");
         return redirect()->to(base_url());
     }
+    
+    public function goback()
+    {
+        return redirect()->back();
+    }
 }

@@ -32,6 +32,7 @@ $routes->setAutoRoute(true);
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 $routes->add('/', 'front\utama::index');
+$routes->add('/goback', 'front\utama::goback');
 $routes->add('/api/(:any)', 'api::$1');
 $routes->add('/utama', 'utama::index');
 $routes->add('/login', 'utama::login');
@@ -119,10 +120,27 @@ $routes->add('/tupload', 'api::tupload');
 
 
 $routes->add('/utamafront', 'front\utama::index');
+
 $routes->add('/register-pekerja', 'worker\login::index');
 $routes->post('/register-pekerja', 'worker\login::register');
+
 $routes->add('/register-perusahaan', 'company\login::index');
 $routes->post('/register-perusahaan', 'company\login::register');
+
+$routes->add('/login-perusahaan', 'company\login::login');
+$routes->add('/login-pekerja', 'worker\login::login');
+
+$routes->add('/passwordperusahaan/(:segment)', 'company\login::password/$1');
+$routes->post('/passwordperusahaan/(:segment)', 'company\login::addpassword/$1');
+
+$routes->add('/passwordpekerja/(:segment)', 'worker\login::password/$1');
+$routes->post('/passwordpekerja/(:segment)', 'worker\login::addpassword/$1');
+
+
+$routes->get('/sendmail', 'SendMail::index');
+$routes->match(['get', 'post'], 'SendMail/sendMail', 'SendMail::sendMail');
+
+
 
 
 // $routes->set404Override('errorc::notFound');

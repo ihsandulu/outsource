@@ -12,7 +12,7 @@ $this->db = Database::connect("default");
         <meta name="author" content="" />
         <title>Outsource</title>
         <!-- Favicon-->
-        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <link rel="icon" type="image/x-icon" href="<?=base_url("assets/favicon.ico");?>" />
         <!-- Bootstrap Icons-->
         <!-- Latest compiled and minified CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -23,7 +23,8 @@ $this->db = Database::connect("default");
         <!-- SimpleLightbox plugin CSS-->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/SimpleLightbox/2.1.0/simpleLightbox.min.css" rel="stylesheet" />
         <!-- Core theme CSS (includes Bootstrap)-->
-        <link href="front/css/styles.css" rel="stylesheet" />
+        <link href="<?=base_url("front/css/styles.css");?>" rel="stylesheet" />
+        <link href="<?=base_url("front/css/whatsapp.css");?>" rel="stylesheet" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         
         <style>

@@ -156,7 +156,7 @@
                         </button>
                     </div>
                     <div class="container-login100-form-btn mt-2">
-                        <a target="_blank" href="<?=base_url();?>" class="login100-form-btn-warning">
+                        <a target="_self" href="<?=base_url();?>" class="login100-form-btn-warning">
                             Back Home
                         </a>
                     </div>
