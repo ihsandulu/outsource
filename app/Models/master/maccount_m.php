@@ -42,18 +42,12 @@ class maccount_m extends core_m
         //delete
         if ($this->request->getPost("delete") == "OK") {  
             $account_id=   $this->request->getPost("account_id");
-            $cek=$this->db->table("product")
-            ->where("account_id", $account_id) 
-            ->get()
-            ->getNumRows();
-            if($cek>0){
-                $data["message"] = "account masih dipakai di data product!";
-            } else{            
-                $this->db
-                ->table("account")
-                ->delete(array("account_id" => $this->request->getPost("account_id"),"store_id" =>session()->get("store_id")));
-                $data["message"] = "Delete Success";
-            }
+                      
+            $this->db
+            ->table("account")
+            ->delete(array("account_id" => $this->request->getPost("account_id"),"store_id" =>session()->get("store_id")));
+            $data["message"] = "Delete Success";
+            
         }
 
         //insert

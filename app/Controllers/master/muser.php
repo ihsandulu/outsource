@@ -20,6 +20,16 @@ class muser extends baseController
     {
         $data = new \App\Models\master\muser_m();
         $data = $data->data();
+        $data["user"]="kantor";
+        return view('master/muser_v', $data);
+    }
+
+
+    public function pekerja()
+    {
+        $data = new \App\Models\master\muser_m();
+        $data = $data->data();
+        $data["user"]="pekerja";
         return view('master/muser_v', $data);
     }
 }

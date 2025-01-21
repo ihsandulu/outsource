@@ -20,6 +20,16 @@ class mposition extends baseController
     {
         $data = new \App\Models\master\mposition_m();
         $data = $data->data();
+        $data["user"]="kantor";
+        return view('master/mposition_v', $data);
+    }
+
+
+    public function pekerja()
+    {
+        $data = new \App\Models\master\mposition_m();
+        $data = $data->data();
+        $data["user"]="pekerja";
         return view('master/mposition_v', $data);
     }
 }

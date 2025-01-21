@@ -13,7 +13,12 @@ class login_m extends core_m
                 $input[$e] = $this->request->getPost($e);
             }
         }
-        $input["store_id"] = 1;
+         if(isset($_GET["store_id"])&&$_GET["store_id"]>0){
+            $store_id=$this->request->getVar("store_id");
+        }else{
+            $store_id="0";
+        }
+        $input["store_id"] = $store_id;
 
         //file
         $user_ktp = $this->request->getFile('user_ktp');
@@ -155,7 +160,7 @@ class login_m extends core_m
         $user_id = $this->db->insertID();
 
         //Kirim Email//
-        $store=$this->db->table("store")->where("store_id","1")->get()->getRow();
+        $store=$this->db->table("store")->where("store_id","0")->get()->getRow();
         $storepicture=$store->store_picture;
         $storename=$store->store_name;
         $store_image=base_url("images/store_picture/".$storepicture);
@@ -201,6 +206,11 @@ class login_m extends core_m
         $data["message"] = "";
         $data["hasil"] = "";
         $data['masuk'] = 0;
+        if(isset($_GET["store_id"])&&$_GET["store_id"]>0){
+            $store_id=$this->request->getVar("store_id");
+        }else{
+            $store_id="0";
+        }
 
 
 
@@ -211,7 +221,7 @@ class login_m extends core_m
                 ->join("position", "position.position_id=user.position_id", "left")
                 ->join("store", "store.store_id=user.store_id", "left")
                 ->where("user_email", $this->request->getVar("email"))
-                ->where("user.store_id", $this->request->getVar("storeid"));
+                ->where("user.store_id", $store_id);
             $user1 = $builder
                 ->get();
 
@@ -292,8 +302,13 @@ class login_m extends core_m
             if ($e != 'create' ) {
                 $input[$e] = $this->request->getPost($e);
             }
-        }        
-        $input["store_id"] = 1;
+        }         
+        if(isset($_GET["store_id"])&&$_GET["store_id"]>0){
+            $store_id=$this->request->getVar("store_id");
+        }else{
+            $store_id="0";
+        }      
+        $input["store_id"] = $store_id;
         $input["user_password"] = password_hash($input["user_password"], PASSWORD_DEFAULT);
 
         // dd($input);

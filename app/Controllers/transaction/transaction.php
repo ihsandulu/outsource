@@ -377,9 +377,9 @@ class transaction extends baseController
 
         // produk terkait posisi
         if(isset($_GET["xtherapist"])){
-            $pekerja=$this->request->getGet("xtherapist");
+            $therapist=$this->request->getGet("xtherapist");
         }else{
-            $pekerja="0";
+            $therapist="0";
         }
 
         // diskon
@@ -448,7 +448,7 @@ class transaction extends baseController
                     $input["transactiond_start"]=$start;
                     $input["transactiond_bend"]=$transactiond_bend;
                     $input["transactiond_end"]=$transactiond_end;
-                    $input["user_id"]=$pekerja;
+                    $input["user_id"]=$therapist;
                     $input["transactiond_foc"]=$foc;
                     $input["transactiond_nominal"]=$nominal;
                     $input["transactiond_percent"]=$percent;
@@ -487,7 +487,7 @@ class transaction extends baseController
                 $where["transactiond_start"]=$start;
                 $where["transactiond_bend"]=$transactiond_bend;
                 $where["transactiond_end"]=$transactiond_end;
-                $where["user_id"]=$pekerja;
+                $where["user_id"]=$therapist;
                 $where["transactiond_foc"]=$foc;
                 $where["transactiond_nominal"]=$nominal;
                 $where["transactiond_percent"]=$percent;
@@ -611,9 +611,9 @@ class transaction extends baseController
 
         //insert produk terkait posisi
         if(isset($_GET["xtherapist"])){
-            $pekerja=$this->request->getGet("xtherapist");
+            $therapist=$this->request->getGet("xtherapist");
         }else{
-            $pekerja="0";
+            $therapist="0";
         }
 
         //insert diskon
@@ -687,7 +687,7 @@ class transaction extends baseController
             $input2["transactiond_start"]=$start;
             $input2["transactiond_bend"]=$transactiond_bend;
             $input2["transactiond_end"]=$transactiond_end;
-            $input2["user_id"]=$pekerja;
+            $input2["user_id"]=$therapist;
             $input2["transactiond_foc"]=$foc;
             $input2["transactiond_nominal"]=$nominal;
             $input2["transactiond_percent"]=$percent;            
@@ -736,54 +736,106 @@ class transaction extends baseController
         echo $data["message"];
     }
 
-    public function pelunasan(){
-        $account_id = $this->request->getGet("account_id");
+    
+
+    public function pelunasan(){     
+        // echo print_r($this->request->getGet());die;
+        $metodepembayaran_id = $this->request->getGet("metodepembayaran_id");
         $transaction_id = $this->request->getGet("transaction_id");
         $transaction_no = $this->request->getGet("transaction_no");
         $transaction_bill = $this->request->getGet("transaction_bill");
         $transaction_pay = $this->request->getGet("transaction_pay");
         $transaction_change = $this->request->getGet("transaction_change");
-        $kas_shift = $this->request->getGet("shift");
-        
-        //metodepembayaran   
-        $transaction_nominalcash = $this->request->getGet("transaction_nominalcash");
-        $transaction_numbercard1 = $this->request->getGet("transaction_numbercard1");
-        $transaction_nominalcard1 = $this->request->getGet("transaction_nominalcard1");
-        $transaction_numbercard2 = $this->request->getGet("transaction_numbercard2");
-        $transaction_nominalcard2 = $this->request->getGet("transaction_nominalcard2");
-
+        $kas_shift = $this->request->getGet("shift"); 
         $transaction_pending = $this->request->getGet("transaction_pending");
         if($transaction_pending>0){
             $transaction_status=2;
         }else{
             $transaction_status=0;
         }
-        echo $transaction_status;
-
-
-        
+        // echo $transaction_status;        
 
         $input["transaction_bill"]=$transaction_bill;
         $input["transaction_pay"]=$transaction_pay;
         $input["transaction_change"]=$transaction_change;
         $input["transaction_status"]=$transaction_status;
-        $input["account_id"]=$account_id;
-        //metodepembayaran        
-        $input["transaction_nominalcash"]=$transaction_nominalcash;
-        $input["transaction_numbercard1"]=$transaction_numbercard1;
-        $input["transaction_nominalcard1"]=$transaction_nominalcard1;
-        $input["transaction_numbercard2"]=$transaction_numbercard2;
-        $input["transaction_nominalcard2"]=$transaction_nominalcard2;
-
+        $input["metodepembayaran_id"]=$metodepembayaran_id;
         $input["transaction_pending"]=$transaction_pending;
+        // print_r($input);die;
 
         $this->db->table("transaction")
         ->where("transaction_id",$transaction_id)
         ->update($input);
-        // echo 0;
-        // echo $this->db->getLastQuery();
+        // echo $this->db->getLastQuery();        
 
-        //kas
+        //masuk kas
+        $metodepembayarand=$this->db->table("metodepembayarand")
+        ->join("account","account.account_id=metodepembayarand.account_id","left")
+        ->join("mastermetodepembayaran","mastermetodepembayaran.mastermetodepembayaran_id=account.mastermetodepembayaran_id","left")
+        ->where("metodepembayaran_id",$metodepembayaran_id)
+        ->orderBy("metodepembayarand_id","ASC")
+        ->get();
+        $no=0;
+        $kode=array(2,3,4,6,7,8,9,10); 
+        // echo $this->db->getLastQuery();die;
+        foreach($metodepembayarand->getResult() as $metodepembayarand){  
+            if(in_array($metodepembayarand->mastermetodepembayaran_id,$kode)){ 
+                $nomor=$this->request->getGet("nomor-".$metodepembayarand->metodepembayarand_id."-".$no);
+                $input1["kas_".$metodepembayarand->mastermetodepembayaran_name]=$nomor;
+                $input11["kas_".$metodepembayarand->mastermetodepembayaran_name]=$nomor;
+            }
+            $nominal=$this->request->getGet("nominal-".$metodepembayarand->metodepembayarand_id."-".$no."1");
+            // echo $nominal;die;
+            $account_id=$metodepembayarand->account_id;
+            
+            
+            $wherer["store_id"]=session()->get("store_id");
+            $wherer["kas_shift"]=$kas_shift;
+            $wherer["transaction_id"]=$transaction_id;
+            $wherer["kas_type"]='masuk';
+            $wherer["account_id"]=$account_id;
+            $wherer["kas_date"]=date("Y-m-d");
+            // print_r($wherer);die;
+            $builder = $this->db->table("kas");
+            $cekkasdouble = $builder->getWhere($wherer);
+            // echo $this->db->getLastQuery();die;
+            $numRows = $cekkasdouble->getNumRows();
+            if($numRows>0){            
+                if ($cekkasdouble->getResult()) {
+                    $kas_id = $cekkasdouble->getRow()->kas_id;
+                    //update kas
+                    $where1["kas_id"]=$kas_id;
+                    $input1["store_id"]=session()->get("store_id");
+                    $input1["kas_shift"]= $kas_shift;
+                    $input1["transaction_id"]= $transaction_id;
+                    $input1["kas_nominal"]= $nominal;
+                    $input1["kas_type"]= 'masuk';
+                    $input1["account_id"]= $account_id;
+                    $input1["kas_description"]= "Pembayaran ".$transaction_no;
+                    $input1["kas_date"]= date("Y-m-d");
+                    $builder=$this->db->table("kas")
+                    ->update($input1,$where1);
+                    // echo $this->db->getLastQuery();die;
+                } else {
+                    echo "kas id tidak ditemukan";die;
+                }            
+            }else{
+                //insert kas
+                $input11["store_id"]=session()->get("store_id");
+                $input11["kas_shift"]= $kas_shift;
+                $input11["transaction_id"]= $transaction_id;
+                $input11["kas_nominal"]= $nominal;
+                $input11["kas_type"]= 'masuk';
+                $input11["account_id"]= $account_id;
+                $input11["kas_description"]= "Pembayaran ".$transaction_no;
+                $input11["kas_date"]= date("Y-m-d");
+                $builder=$this->db->table("kas")
+                ->insert($input11);
+            }
+            $no++;
+        }
+
+        /* //kas
         $kas=$this->db->table("kas")
         ->where("transaction_id",$transaction_id);
         // ->get();
@@ -808,7 +860,7 @@ class transaction extends baseController
             $builder=$this->db->table("kas")
             ->update($input1,$where1);
 
-        }
+        } */
         
 
         // echo $this->db->getLastQuery();
@@ -971,7 +1023,7 @@ class transaction extends baseController
                     $tprice=0;
                     foreach ($usr->getResult() as $usr) { 
                         if($usr->product_durasi>0&&$usr->product_lanjutan==0){$start=1;}else{$start=0;}
-                        if($usr->position_id>0){$pekerja=1;}else{$pekerja=0;}
+                        if($usr->position_id>0){$therapist=1;}else{$therapist=0;}
                         if($usr->transactiond_foc>0){$diskon=$usr->transactiond_price;$kdis="FOC";}else 
                         if($usr->transactiond_nominal>0){$diskon=$usr->transactiond_nominal;$kdis="Nominal";}else 
                         if($usr->transactiond_percent>0){$diskon=$usr->transactiond_percent/100*$usr->transactiond_price;$kdis=$usr->transactiond_percent."%";}else 
@@ -1025,7 +1077,7 @@ class transaction extends baseController
                                     <?= $usr->product_name; ?>
                                 </div>
                                 <?php if($usr->user_id>0){?>
-                                    <div class="mb-10 text-primary">Pekerja:<?= $usr->user_name; ?></div>
+                                    <div class="mb-10 text-primary">Therapist:<?= $usr->user_name; ?></div>
                                 <?php }?>  
                                 <?php if($usr->product_durasi>0&&$usr->product_lanjutan==0){?>
                                     <div class="text-secondary mb-10">(<b class="text-success">Start:</b> <?= $usr->product_start; ?>)</div>
@@ -1048,15 +1100,15 @@ class transaction extends baseController
                                         && session()->get("halaman")['13']['act_update'] == "1"
                                     )
                                 ) { ?>
-                                    <?php if($qty>1 && $pekerja==0 && $usr->category_unique==0){?>
+                                    <?php if($qty>1&&$usr->category_unique==0){?>
                                     <i onclick="updateqty(<?= $usr->transactiond_id; ?>,'kurang','1')" class="fa fa-minus text-small text-danger pointer"></i> 
                                     <?php }?>
 
-                                    <button type="button" class="btn btn-xs btn-warning" onclick="insertjmlnota(<?= $usr->transactiond_id; ?>,<?= $qty; ?>,<?= $usr->product_id; ?>,<?=$start;?>,<?=$pekerja;?>,'<?= $usr->product_start; ?>',<?= $usr->user_id; ?>,<?= $usr->transactiond_foc; ?>,<?= $usr->transactiond_nominal; ?>,<?= $usr->transactiond_percent; ?>);">
+                                    <button type="button" class="btn btn-xs btn-warning" onclick="insertjmlnota(<?= $usr->transactiond_id; ?>,<?= $qty; ?>,<?= $usr->product_id; ?>,<?=$start;?>,<?=$therapist;?>,'<?= $usr->product_start; ?>',<?= $usr->user_id; ?>,<?= $usr->transactiond_foc; ?>,<?= $usr->transactiond_nominal; ?>,<?= $usr->transactiond_percent; ?>);">
                                      <?= number_format($qty,0,",",".") ?> <?= $usr->unit_name; ?> 
                                     </button>
 
-                                    <?php if(($usr->product_stock>0 && $usr->category_unique==0)||($usr->product_type==1 && $pekerja==0 && $usr->category_unique==0)){?>
+                                    <?php if(($usr->product_stock>0&&$usr->category_unique==0)||($usr->product_type==1&&$usr->category_unique==0)){?>
                                         <i onclick="updateqty(<?= $usr->transactiond_id; ?>,'tambah','1')" class="fa fa-plus text-small text-success pointer"></i>
                                     <?php }?>
                                 <?php }else{?>
@@ -1132,7 +1184,7 @@ class transaction extends baseController
         $isiinsertnota ="";
         foreach ($product->getResult() as $product) {
             if($product->product_durasi>0&&$product->product_lanjutan==0){$start=1;}else{$start=0;}
-            if($product->position_id>0){$pekerja=1;}else{$pekerja=0;}
+            if($product->position_id>0){$therapist=1;}else{$therapist=0;}
         ?>
         <?php 
         if (
@@ -1149,7 +1201,7 @@ class transaction extends baseController
             )
         ) {
             if(($product->product_stock>0&&$product->product_type==0)||($product->product_type==1&&$product->product_lanjutan==0)){
-                $insertnota = "insertjmlnota(0,1,".$product->product_id.",".$start.",".$pekerja.",'0000-00-00 00:00:00',0,0,0,0)";
+                $insertnota = "insertjmlnota(0,1,".$product->product_id.",".$start.",".$therapist.",'0000-00-00 00:00:00',0,0,0,0)";
                 $disabled="";
             }elseif($product->product_lanjutan>0){
                 $insertnota = "toast('Info', 'Produk Induk Tidak Ditemukan!')";
@@ -1161,7 +1213,7 @@ class transaction extends baseController
 
             if($product->transaction_status==2&&$product->category_unique==1){$disabled="disabled";$insertnota = "toast('Info Status', 'Tidak Tersedia!')";}
 
-            $isiinsertnota = "insertjmlnota(0,1,".$product->product_id.",".$start.",".$pekerja.",'0000-00-00 00:00:00',0,0,0,0)";
+            $isiinsertnota = "insertjmlnota(0,1,".$product->product_id.",".$start.",".$therapist.",'0000-00-00 00:00:00',0,0,0,0)";
 
         }else{$insertnota =""; $disabled="disabled";}
         
@@ -1229,7 +1281,7 @@ class transaction extends baseController
                     foreach ($usr->getResult() as $usr) { 
                         // if($usr->product_durasi>0&&$usr->product_lanjutan==0){$start=1;}else{$start=0;}
                         if($usr->product_durasi>0&&$usr->product_lanjutan==0){$start=1;}else{$start=0;}
-                        if($usr->position_id>0){$pekerja=1;}else{$pekerja=0;}
+                        if($usr->position_id>0){$therapist=1;}else{$therapist=0;}
                     ?>
                     <?php 
                         if (
@@ -1246,7 +1298,7 @@ class transaction extends baseController
                             )
                         ) {
                             if(($usr->product_stock>0&&$usr->product_type==0)||($usr->product_type==1&&$usr->product_lanjutan==0)){
-                                $insertnota = "insertjmlnota(0,1,".$usr->product_id.",".$start.",".$pekerja.",'0000-00-00 00:00:00',0,0,0,0)";
+                                $insertnota = "insertjmlnota(0,1,".$usr->product_id.",".$start.",".$therapist.",'0000-00-00 00:00:00',0,0,0,0)";
                                 $disabled="";
                             }elseif($usr->product_lanjutan>0){
                                 $insertnota = "toast('Info', 'Produk Induk Tidak Ditemukan!')";
@@ -1482,6 +1534,50 @@ class transaction extends baseController
             $this->db->table("transactiond")
             ->update($input1,$where1); */
         }
+    }
+
+    public function arraymetodepembayaran(){
+        $metodepembayarand=$this->db->table("metodepembayarand")
+        ->join("account","account.account_id=metodepembayarand.account_id","left")
+        ->join("mastermetodepembayaran","mastermetodepembayaran.mastermetodepembayaran_id=account.mastermetodepembayaran_id","left")
+        ->where("metodepembayaran_id",$_GET["metodepembayaran_id"])
+        ->get();
+        $no=0;
+        $kode=array(2,3,4,6,7,8,9,10);
+        foreach($metodepembayarand->getResult() as $metodepembayarand){?>
+            <div class="form-group">
+                <label class="bg-success p-2"><?=$metodepembayarand->account_name;?></label> 
+            </div>
+            <?php if(in_array($metodepembayarand->mastermetodepembayaran_id,$kode)){?>                
+            <div class="form-group nucard">
+                <label for="nomor-<?=$metodepembayarand->metodepembayarand_id;?>-<?=$no;?>" class="p-2">Nomor :</label> &nbsp
+                <input type="text" class="form-control inputbayar inputnyanum" id="nomor-<?=$metodepembayarand->metodepembayarand_id;?>-<?=$no;?>">
+            </div>
+            <?php }?>
+            <div class="form-group nocard">
+                <label for="nominal-<?=$metodepembayarand->metodepembayarand_id;?>-<?=$no;?>">Nominal :</label> &nbsp
+                <input onkeyup="rupiahnumerik(this);" change="kembalian();" onclick="fokus('bayar')" type="number" class="form-control inputbayar inputnyanom" id="nominal-<?=$metodepembayarand->metodepembayarand_id;?>-<?=$no;?>" name="nominal-<?=$metodepembayarand->metodepembayarand_id;?>-<?=$no;?>">
+                <script>rupiahnumerik($("#nominal-<?=$metodepembayarand->metodepembayarand_id;?>-<?=$no;?>"))</script>
+            </div>
+        <?php $no++;}
+    }
+
+    public function isipbyr(){
+        $metodepembayarand=$this->db->table("metodepembayarand")
+        ->join("account","account.account_id=metodepembayarand.account_id","left")
+        ->join("mastermetodepembayaran","mastermetodepembayaran.mastermetodepembayaran_id=account.mastermetodepembayaran_id","left")
+        ->where("metodepembayaran_id",$_GET["metodepembayaran_id"])
+        ->get();
+        $no=0;
+        $kode=array(2,3,4,6,7,8,9,10);
+        $lempar="";
+        foreach($metodepembayarand->getResult() as $metodepembayarand){
+            if(in_array($metodepembayarand->mastermetodepembayaran_id,$kode)){               
+                $lempar.="nomor-".$metodepembayarand->metodepembayarand_id."-".$no.",";
+            }
+            $lempar.="nominal-".$metodepembayarand->metodepembayarand_id."-".$no."1,";
+        $no++;}
+        return $lempar;
     }
 
     

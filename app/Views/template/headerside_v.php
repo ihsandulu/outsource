@@ -116,7 +116,7 @@
                         )
                     ) { ?>
                     <li> 
-                        <a class="has-arrow  " href="#" aria-expanded="false" data-toggle="collapse" data-target="#demo1"><i class="fa fa-users"></i><span class="hide-menu">Manajemen Member <span class="label label-rouded label-warning pull-right">2</span></span></a>
+                        <a class="has-arrow  " href="#" aria-expanded="false" data-toggle="collapse" data-target="#demo1"><i class="fa fa-users"></i><span class="hide-menu">Manajemen Perusahaan <span class="label label-rouded label-warning pull-right">2</span></span></a>
                         <ul aria-expanded="false" id="demo1" class="collapse">
                             <?php 
                             if (
@@ -132,7 +132,7 @@
                                     && session()->get("halaman")['35']['act_read'] == "1"
                                 )
                             ) { ?>
-                            <li><a href="<?= base_url("mpositionm"); ?>"><i class="fa fa-caret-right"></i> &nbsp;Grade Member</a></li>
+                            <li><a href="<?= base_url("mpositionm"); ?>"><i class="fa fa-caret-right"></i> &nbsp;Grade Perusahaan</a></li>
                             <?php }?>
                             <?php 
                             if (
@@ -148,7 +148,111 @@
                                     && session()->get("halaman")['36']['act_read'] == "1"
                                 )
                             ) { ?>
-                            <li><a href="<?= base_url("mmember"); ?>"><i class="fa fa-caret-right"></i> &nbsp;Member</a></li>
+                            <li><a href="<?= base_url("mmember"); ?>"><i class="fa fa-caret-right"></i> &nbsp;Perusahaan</a></li>
+                            <?php }?>
+                        </ul>
+                    </li>
+                    <?php }?>
+
+                    <?php 
+                    if (
+                        (
+                            isset(session()->get("position_administrator")[0][0]) 
+                            && (
+                                session()->get("position_administrator") == "1" 
+                                || session()->get("position_administrator") == "2"
+                            )
+                        ) ||
+                        (
+                            isset(session()->get("halaman")['34']['act_read']) 
+                            && session()->get("halaman")['34']['act_read'] == "1"
+                        )
+                    ) { ?>
+                    <li> 
+                        <a class="has-arrow  " href="#" aria-expanded="false" data-toggle="collapse" data-target="#pekerja"><i class="fa fa-users"></i><span class="hide-menu">Manajemen Pekerja <span class="label label-rouded label-warning pull-right">2</span></span></a>
+                        <ul aria-expanded="false" id="pekerja" class="collapse">
+                            <?php 
+                            if (
+                                (
+                                    isset(session()->get("position_administrator")[0][0]) 
+                                    && (
+                                        session()->get("position_administrator") == "1" 
+                                        || session()->get("position_administrator") == "2"
+                                    )
+                                ) ||
+                                (
+                                    isset(session()->get("halaman")['39']['act_read']) 
+                                    && session()->get("halaman")['39']['act_read'] == "1"
+                                )
+                            ) { ?>
+                            <li><a href="<?= base_url("mpoingrade"); ?>"><i class="fa fa-caret-right"></i> &nbsp;Poin Grade</a></li>
+                            <?php }?>
+                            <?php 
+                            if (
+                                (
+                                    isset(session()->get("position_administrator")[0][0]) 
+                                    && (
+                                        session()->get("position_administrator") == "1" 
+                                        || session()->get("position_administrator") == "2"
+                                    )
+                                ) ||
+                                (
+                                    isset(session()->get("halaman")['40']['act_read']) 
+                                    && session()->get("halaman")['40']['act_read'] == "1"
+                                )
+                            ) { ?>
+                            <li><a href="<?= base_url("mpoin"); ?>"><i class="fa fa-caret-right"></i> &nbsp;Poin</a></li>
+                            <?php }?>
+
+                            <?php 
+                            if (
+                                (
+                                    isset(session()->get("position_administrator")[0][0]) 
+                                    && (
+                                        session()->get("position_administrator") == "1" 
+                                        || session()->get("position_administrator") == "2"
+                                    )
+                                ) ||
+                                (
+                                    isset(session()->get("halaman")['42']['act_read']) 
+                                    && session()->get("halaman")['42']['act_read'] == "1"
+                                )
+                            ) { ?>
+                            <li><a href="<?= base_url("mpekerjaposition"); ?>"><i class="fa fa-caret-right"></i> &nbsp;Posisi Pekerja</a></li>
+                            <?php }?>
+                            <?php 
+                            if (
+                                (
+                                    isset(session()->get("position_administrator")[0][0]) 
+                                    && (
+                                        session()->get("position_administrator") == "1" 
+                                        || session()->get("position_administrator") == "2"
+                                    )
+                                ) ||
+                                (
+                                    isset(session()->get("halaman")['41']['act_read']) 
+                                    && session()->get("halaman")['41']['act_read'] == "1"
+                                )
+                            ) { ?>
+                            <li><a href="<?= base_url("mpekerja"); ?>"><i class="fa fa-caret-right"></i> &nbsp;Pekerja</a></li>
+                            <?php }?>
+
+                            
+                            <?php 
+                            if (
+                                (
+                                    isset(session()->get("position_administrator")[0][0]) 
+                                    && (
+                                        session()->get("position_administrator") == "1" 
+                                        || session()->get("position_administrator") == "2"
+                                    )
+                                ) ||
+                                (
+                                    isset(session()->get("halaman")['43']['act_read']) 
+                                    && session()->get("halaman")['43']['act_read'] == "1"
+                                )
+                            ) { ?>
+                            <li><a href="<?= base_url("mpenilaian"); ?>"><i class="fa fa-caret-right"></i> &nbsp;Penilaian</a></li>
                             <?php }?>
                         </ul>
                     </li>
@@ -328,6 +432,8 @@
                     </li>
                     <?php }?>
 
+                    
+
                     <?php 
                     if (
                         (
@@ -344,6 +450,44 @@
                     ) { ?>
                     <li> 
                         <a class="  " href="<?= base_url("maccount"); ?>" aria-expanded="false"><i class="fa fa-bookmark-o"></i><span class="hide-menu">Akun</span></a>
+                    </li>
+                    <?php }?>
+
+                    <?php 
+                    if (
+                        (
+                            isset(session()->get("position_administrator")[0][0]) 
+                            && (
+                                session()->get("position_administrator") == "1" 
+                                || session()->get("position_administrator") == "2"
+                            )
+                        ) ||
+                        (
+                            isset(session()->get("halaman")['38']['act_read']) 
+                            && session()->get("halaman")['38']['act_read'] == "1"
+                        )
+                    ) { ?>
+                    <li> 
+                        <a class="  " href="<?= base_url("mmastermetodepembayaran"); ?>" aria-expanded="false"><i class="fa fa-bookmark-o"></i><span class="hide-menu">Master Metode Pembayaran</span></a>
+                    </li>
+                    <?php }?>
+
+                    <?php 
+                    if (
+                        (
+                            isset(session()->get("position_administrator")[0][0]) 
+                            && (
+                                session()->get("position_administrator") == "1" 
+                                || session()->get("position_administrator") == "2"
+                            )
+                        ) ||
+                        (
+                            isset(session()->get("halaman")['37']['act_read']) 
+                            && session()->get("halaman")['37']['act_read'] == "1"
+                        )
+                    ) { ?>
+                    <li> 
+                        <a class="  " href="<?= base_url("mmetodepembayaran"); ?>" aria-expanded="false"><i class="fa fa-bookmark-o"></i><span class="hide-menu">Metode Pembayaran</span></a>
                     </li>
                     <?php }?>
 

@@ -80,7 +80,7 @@
                             <form id="contactForm" data-sb-form-api-token="API_TOKEN" method="post" action="" enctype="multipart/form-data">
                                 
                                 <div class="form-floating mb-3">
-                                    <input required class="form-control" id="user_name" name="user_name" type="text" placeholder="Enter your company name..." data-sb-validations="required" />
+                                    <input required class="form-control" id="user_name" name="user_name" type="text" placeholder="Enter your name..." data-sb-validations="required" />
                                     <label for="name">Full name</label>
                                     <div class="invalid-feedback" data-sb-feedback="name:required">A name is required.</div>
                                 </div>

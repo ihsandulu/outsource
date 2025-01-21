@@ -526,4 +526,19 @@ class api extends baseController
         <?php }?>
         <?php
     }
+
+    public function poin(){
+        $poingrade_id=$this->request->getGET("poingrade_id");
+        $poin_id=$this->request->getGET("poin_id");
+        ?>
+        <option value="0">Pilih Poin</option>
+        <?php $poin= $this->db->table("poin")
+        ->where("poingrade_id",$poingrade_id)
+        ->orderBy("poin_name","asc")
+        ->get();
+        foreach($poin->getResult() as $poin){?>
+            <option value="<?=$poin->poin_id;?>" <?= ($poin_id == $poin->poin_id) ? "selected" : ""; ?>><?=$poin->poin_name;?></option>
+        <?php }?>
+        <?php
+    }
 }

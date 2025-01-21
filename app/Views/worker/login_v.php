@@ -118,7 +118,7 @@
     <div class="limiter">
         <div class="container-login100">
             <div class="wrap-login100">
-                <form action="<?= base_url('login-perusahaan'); ?>" method="POST" class="login100-form validate-form p-l-55 p-r-55 p-t-178">
+                <form action="<?= base_url('login-pekerja'); ?>" method="POST" class="login100-form validate-form p-l-55 p-r-55 p-t-178">
                     <span class="login100-form-title">
                         Sign In<br />
                         <small>.:: <i>Pencari Kerja</i> ::.</small>

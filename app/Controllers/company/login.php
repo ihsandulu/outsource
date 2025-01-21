@@ -37,6 +37,7 @@ class login extends baseController
             } else {
                 $data1["message"] = "Terjadi kesalahan. Mohon kembali mengulangi pendaftaran di waktu lain.";
             }
+            // $data1["message"] = $e;
             return view('company/register_v', $data1);
         }
        
@@ -53,11 +54,13 @@ class login extends baseController
     {
         $data = new login_m();
         $data = $data->login();
+        // dd($data);
         if ($data['masuk'] == 1) {
             return redirect()->to(base_url('company_utama?message=' . $data["hasil"]));
         }
         return view('company/login_v', $data);
     }
+
     public function password()
     {        
         $data["sukses"] = "0";

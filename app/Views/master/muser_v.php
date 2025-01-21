@@ -49,42 +49,42 @@
                                 <h3><?= $judul; ?></h3>
                             </div>
                             <form class="form-horizontal" method="post" enctype="multipart/form-data">
-
+                                <?php
+                                    if($user=="pekerja"){
+                                        $jabatan="Pekerjaan";
+                                    }
+                                    if($user=="kantor"){
+                                        $jabatan="Jabatan";
+                                    }
+                                ?>
                                 <div class="form-group">
-                                    <label class="control-label col-sm-2" for="position_id">Jabatan:</label>
+                                    <label class="control-label col-sm-2" for="position_id"><?=$jabatan;?>:</label>
                                     <div class="col-sm-10">
                                         <?php
-                                        $position = $this->db->table("position")
+                                        $builder = $this->db->table("position")
                                             ->where("position_administrator!=","1")
-                                            ->where("store_id",session()->get("store_id"))
-                                            ->orderBy("position_name", "ASC")
+                                            ->where("store_id",session()->get("store_id"));
+                                        if($user=="pekerja"){
+                                            $builder->where("position.position_loker","1");
+                                        }
+                                        if($user=="kantor"){
+                                            $builder->where("position.position_loker !=","1");
+                                        }
+                                        $position = $builder->orderBy("position_name", "ASC")
                                             ->get();
                                         //echo $this->db->getLastQuery();
                                         ?>
                                         <select onchange="cektherapist();" class="form-control select" id="position_id" name="position_id">
-                                            <option value="0" <?= ($position_id == "0") ? "selected" : ""; ?>>Pilih Jabatan</option>
+                                            <option value="0" <?= ($position_id == "0") ? "selected" : ""; ?>>Pilih <?=$jabatan;?></option>
                                             <?php
                                             foreach ($position->getResult() as $position) { ?>
                                                 <option value="<?= $position->position_id; ?>" <?= ($position_id == $position->position_id) ? "selected" : ""; ?>><?= $position->position_name; ?></option>
                                             <?php } ?>
                                         </select>
-                                        <script>
-                                            function cektherapist(){
-                                                let posisi = $("#position_id").val();
-                                                // alert(posisi);
-                                                if(posisi==100){
-                                                    $(".therapist").show();
-                                                }else{
-                                                    $(".therapist").hide();
-                                                }
-                                            }
-                                            $(document).ready(function(){
-                                                cektherapist();
-                                            });
-                                        </script>
                                     </div>
                                 </div>
 
+                                <?php if($user=="kantor"){?>
                                 <div class="form-group">
                                     <label class="control-label col-sm-12" for="user_penanggung">Penanggung Pending Bill:</label>
                                     <div class="col-sm-10">
@@ -106,7 +106,7 @@
 
                                     </div>
                                 </div>
-
+                                <?php }?>
                                
                                 <div class="form-group">
                                     <label class="control-label col-sm-2" for="user_name">Username:</label>
@@ -155,14 +155,16 @@
 
                                     </div>
                                 </div>
-
+                                
+                                <?php if($user=="pekerja"){?>
                                 <div class="form-group therapist">
-                                    <label class="control-label col-sm-2" for="user_trainer">Trainer:</label>
+                                    <label class="control-label col-sm-2" for="user_trainer">Trainer (Penanggung Jawab):</label>
                                     <div class="col-sm-10">
                                         <select class="form-control" id="user_trainer" name="user_trainer">
                                             <option value="" <?=($user_trainer=="")?"selected":"";?>>Pilih Trainer</option>
-                                            <?php $user=$this->db->table("user")                                            
-                                            ->where("position_id","101")
+                                            <?php $user=$this->db->table("user")
+                                            ->join("position","position.position_id=user.position_id","left")                                            
+                                            ->where("position_name","trainer")
                                             ->get();
                                             foreach($user->getResult() as $user){?>
                                             <option value="<?=$user->user_id;?>" <?=($user->user_id==$user_trainer)?"selected":"";?>><?=$user->user_name;?></option>
@@ -186,7 +188,7 @@
 
                                     </div>
                                 </div>
-
+                                <?php }?>
 
 
                                 <input type="hidden" name="user_id" value="<?= $user_id; ?>" />
@@ -217,26 +219,39 @@
                                         <th>No.</th>
                                         <th>Toko</th>
                                         <th>Posisi</th>
+                                        <?php if($user=="pekerja"){?>
+                                        <th>Tingkat</th>
+                                        <?php }?>
                                         <th>Name</th>
                                         <th>Alamat</th>
                                         <th>Email</th>
                                         <th>Whatsapp</th>
                                         <th>NPWP</th>
+                                        <?php if($user=="pekerja"){?>
                                         <th>Trainer</th>
                                         <th>Sales</th>
+                                        <?php }?>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
-                                    $usr = $this->db
+                                    $builder = $this->db
                                         ->table("user")
+                                        ->join("poingrade", "poingrade.poingrade_id=user.poingrade_id", "left")
                                         ->join("position", "position.position_id=user.position_id", "left")
                                         ->join("(SELECT user_id AS trainer_id, user_name AS trainer_name FROM user)trainer", "trainer.trainer_id=user.user_trainer", "left")
                                         ->join("(SELECT user_id AS sales_id, user_name AS sales_name FROM user)sales", "sales.sales_id=user.user_sales", "left")
                                         ->join("store", "store.store_id=user.store_id", "left")
                                         ->where("position.position_administrator !=", "1")
-                                        ->where("user.store_id", session()->get("store_id"))
-                                        ->orderBy("user_id", "desc")
+                                        ->where("user.store_id", session()->get("store_id"));
+                                        if($user=="pekerja"){
+                                            $builder->where("position.position_loker","1");
+                                        }
+                                        if($user=="kantor"){
+                                            $builder->where("position.position_loker !=","1");
+                                        }
+
+                                        $usr=$builder->orderBy("user_id", "desc")
                                         ->get();
                                     // echo $this->db->getLastquery();
                                     $no = 1;
@@ -259,13 +274,18 @@
                                             <td><?= $no++; ?></td>
                                             <td><?= $usr->store_name; ?></td>
                                             <td><?= $usr->position_name; ?></td>
+                                            <?php if($user=="pekerja"){?>
+                                                <td><?= $usr->poingrade_name; ?></td>
+                                            <?php }?>
                                             <td><?= $usr->user_name; ?></td>
                                             <td><?= $usr->user_address; ?></td>
                                             <td><?= $usr->user_email; ?></td>
                                             <td><?= $usr->user_wa; ?></td>
                                             <td><?= $usr->user_npwp; ?></td>
-                                            <td><?= $usr->trainer_name; ?></td>
-                                            <td><?= $usr->sales_name; ?></td>
+                                            <?php if($user=="pekerja"){?>
+                                                <td><?= $usr->trainer_name; ?></td>
+                                                <td><?= $usr->sales_name; ?></td>
+                                            <?php }?>
                                         </tr>
                                     <?php } ?>
                                 </tbody>

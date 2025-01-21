@@ -141,6 +141,35 @@ $routes->get('/sendmail', 'SendMail::index');
 $routes->match(['get', 'post'], 'SendMail/sendMail', 'SendMail::sendMail');
 
 
+$routes->add('/mmastermetodepembayaran', 'master\mmastermetodepembayaran::index');
+$routes->add('/mmetodepembayaran', 'master\mmetodepembayaran::index');
+$routes->add('/mmetodepembayarand', 'master\mmetodepembayarand::index');
+
+
+$routes->add('/arraymetodepembayaran', 'transaction\transaction::arraymetodepembayaran');
+$routes->add('/isipbyr', 'transaction\transaction::isipbyr');
+
+
+$routes->add('/mpoingrade', 'master\mpoingrade::index');
+$routes->add('/mpoin', 'master\mpoin::index');
+$routes->add('/mpekerjaposition', 'master\mposition::pekerja');
+$routes->add('/mpekerja', 'master\muser::pekerja');
+$routes->add('/mpenilaian', 'master\mpenilaian::index');
+
+$routes->add('/company_utama', 'company\utama::index');
+$routes->add('/transaksip', 'company\rtransaction::index');
+$routes->add('/transaksipd', 'company\rtransactiond::index');
+$routes->add('/pengajuan', 'company\pengajuan::index');
+$routes->add('/pengajuan_product', 'company\pengajuan::product');
+$routes->add('/pengajuan_pekerja', 'company\pengajuan::pekerja');
+
+$routes->add('/worker_utama', 'worker\utama::index');
+$routes->add('/transaksiw', 'worker\rtransaction::index');
+$routes->add('/transaksiwd', 'worker\rtransactiond::index');
+$routes->add('/pelatihan', 'worker\pelatihan::index');
+
+
+
 
 
 // $routes->set404Override('errorc::notFound');

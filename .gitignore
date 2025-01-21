@@ -41,7 +41,6 @@ $RECYCLE.BIN/
 #-------------------------
 # These should never be under version control,
 # as it poses a security risk.
-.env
 .vagrant
 Vagrantfile
 
@@ -83,7 +82,7 @@ phpunit
 #-------------------------
 # Composer
 #-------------------------
-vendor/
+
 
 #-------------------------
 # IDE / Development Files
@@ -127,5 +126,8 @@ nb-configuration.xml
 
 public/images/product_picture/
 public/images/store_picture/
-
-
+images/user_cv/
+images/user_ktp/
+images/user_picture/
+#.env
+#vendor/

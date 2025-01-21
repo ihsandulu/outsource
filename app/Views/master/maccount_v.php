@@ -88,12 +88,41 @@
                                 <div class="form-group">
                                     <label class="control-label col-sm-2" for="account_ispembayaran">Metode Pembayaran:</label>
                                     <div class="col-sm-10">
-                                        <select class="form-control" id="account_ispembayaran" name="account_ispembayaran">
+                                        <select onkeyup="mpembayaran()" class="form-control" id="account_ispembayaran" name="account_ispembayaran">
                                             <option value="0" <?=($account_ispembayaran==0)?"selected":"";?>>Tidak</option>
                                             <option value="1" <?=($account_ispembayaran==1)?"selected":"";?>>Ya</option>
                                         </select>
                                     </div>
-                                </div>  
+                                </div> 
+                                <script>
+                                    function mpembayaran(){
+                                        let account_ispembayaran = $("#account_ispembayaran").val();
+                                        if(account_ispembayaran==1){
+                                            $("#mastermb").show();
+                                        }else{
+                                            $("#mastermb").hide();
+                                        }
+                                    }
+                                    $(document).ready(function(){
+                                        mpembayaran();
+                                    });
+                                </script>
+                                <div class="form-group" id="mastermb">
+                                    <label class="control-label col-sm-2" for="mastermetodepembayaran_id">Jenis Metode Pembayaran:</label>
+                                    <div class="col-sm-10">
+                                        <select class="form-control select2" id="mastermetodepembayaran_id" name="mastermetodepembayaran_id">
+                                        <option value="0" <?=($mastermetodepembayaran_id==0)?"selected":"";?>>Pilih Jenis Metode Pembayaran</option>
+                                        <?php 
+                                        $mastermetodepembayaran=$this->db->table("mastermetodepembayaran")
+                                        ->where("store_id",session()->get("store_id"))
+                                        ->orderBy("mastermetodepembayaran_id","asc")
+                                        ->get();
+                                        foreach($mastermetodepembayaran->getResult() as $mastermetodepembayaran){?>
+                                            <option value="<?=$mastermetodepembayaran->mastermetodepembayaran_id;?>" <?=($mastermetodepembayaran_id==$mastermetodepembayaran->mastermetodepembayaran_id)?"selected":"";?>>(<?=$mastermetodepembayaran->mastermetodepembayaran_id;?>) <?=$mastermetodepembayaran->mastermetodepembayaran_name;?></option>
+                                        <?php }?>
+                                        </select>
+                                    </div>
+                                </div>        
 
                                 <input type="hidden" name="account_id" value="<?= $account_id; ?>" />
                                 <div class="form-group">
@@ -125,6 +154,8 @@
                                         <th>Toko</th>
                                         <th>ID</th>
                                         <th>Akun</th>
+                                        <th>Pembayaran</th>
+                                        <th>Jenis Pembayaran</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -132,11 +163,13 @@
                                     $usr = $this->db
                                         ->table("account")
                                         ->join("store", "store.store_id=account.store_id", "left")
+                                        ->join("mastermetodepembayaran", "mastermetodepembayaran.mastermetodepembayaran_id=account.mastermetodepembayaran_id", "left")
                                         ->where("account.store_id",session()->get("store_id"))
                                         ->orderBy("account_name", "ASC")
                                         ->get();
                                     //echo $this->db->getLastquery();
                                     $no = 1;
+                                    $pembayaran=array("Tidak","Ya");
                                     foreach ($usr->getResult() as $usr) { ?>
                                         <tr>
                                             <?php if (!isset($_GET["report"])) { ?>
@@ -189,6 +222,8 @@
                                             <td><?= $usr->store_name; ?></td>
                                             <td><?= $usr->account_id; ?></td>
                                             <td><?= $usr->account_name; ?></td>
+                                            <td><?= $pembayaran[$usr->account_ispembayaran]; ?></td>
+                                            <td><?= $usr->mastermetodepembayaran_name; ?></td>
                                         </tr>
                                     <?php } ?>
                                 </tbody>

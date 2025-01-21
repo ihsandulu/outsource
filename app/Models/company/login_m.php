@@ -13,7 +13,13 @@ class login_m extends core_m
                 $input[$e] = $this->request->getPost($e);
             }
         }
-        $input["store_id"] = 1;
+        
+        if(isset($_GET["store_id"])&&$_GET["store_id"]>0){
+            $store_id=$this->request->getVar("store_id");
+        }else{
+            $store_id="0";
+        }
+        $input["store_id"] = $store_id;
         // dd($input);
         $builder = $this->db->table('member');
         $builder->insert($input);
@@ -22,7 +28,7 @@ class login_m extends core_m
         $member_id = $this->db->insertID();
 
         //Kirim Email//
-        $store=$this->db->table("store")->where("store_id","1")->get()->getRow();
+        $store=$this->db->table("store")->where("store_id","0")->get()->getRow();
         $storepicture=$store->store_picture;
         $storename=$store->store_name;
         $store_image=base_url("images/store_picture/".$storepicture);
@@ -48,8 +54,8 @@ class login_m extends core_m
 		else 
 		{
             $email = 'Email unsuccessfully!';
-            // $data = $email->printDebugger(['headers']);
-            // print_r($data);
+            // $email = $email->printDebugger(['headers']);
+            // print_r($email);die;
         }
         //selesai kirim email//
 
@@ -68,6 +74,11 @@ class login_m extends core_m
         $data["message"] = "";
         $data["hasil"] = "";
         $data['masuk'] = 0;
+        if(isset($_GET["store_id"])&&$_GET["store_id"]>0){
+            $store_id=$this->request->getVar("store_id");
+        }else{
+            $store_id="0";
+        }
 
 
 
@@ -78,7 +89,7 @@ class login_m extends core_m
                 ->join("positionm", "positionm.positionm_id=member.positionm_id", "left")
                 ->join("store", "store.store_id=member.store_id", "left")
                 ->where("member_email", $this->request->getVar("email"))
-                ->where("member.store_id", $this->request->getVar("storeid"));
+                ->where("member.store_id", $store_id);
             $member1 = $builder
                 ->get();
 
@@ -138,8 +149,13 @@ class login_m extends core_m
             if ($e != 'create' ) {
                 $input[$e] = $this->request->getPost($e);
             }
-        }        
-        $input["store_id"] = 1;
+        }  
+        if(isset($_GET["store_id"])&&$_GET["store_id"]>0){
+            $store_id=$this->request->getVar("store_id");
+        }else{
+            $store_id="0";
+        }      
+        $input["store_id"] = $store_id;
         $input["member_password"] = password_hash($input["member_password"], PASSWORD_DEFAULT);
 
         // dd($input);

@@ -62,7 +62,6 @@
                                 <h3><?= $judul; ?></h3>
                             </div>
                             <form class="form-horizontal" method="post" enctype="multipart/form-data">
-
                                 <div class="form-group">
                                     <label class="control-label col-sm-2" for="position_name">Posisi:</label>
                                     <div class="col-sm-10">
@@ -70,16 +69,12 @@
 
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label class="control-label col-sm-2" for="position_loker">Loker:</label>
-                                    <div class="col-sm-10">
-                                        <select class="form-control" id="position_loker" name="position_loker">
-                                            <option value="1" <?=($position_loker==1)?"selected":"";?>>Ya</option>
-                                            <option value="0" <?=($position_loker==0)?"selected":"";?>>Tidak</option>
-                                        </select>
-
-                                    </div>
-                                </div>
+                                <?php if($user=="pekerja"){?>
+                                    <input type="hidden" name="position_loker" value="1" />
+                                <?php }?>
+                                <?php if($user=="kantor"){?>
+                                    <input type="hidden" name="position_loker" value="0" />
+                                <?php }?>
 
                                 <input type="hidden" name="position_id" value="<?= $position_id; ?>" />
                                 <div class="form-group">
@@ -114,11 +109,18 @@
                                 </thead>
                                 <tbody>
                                     <?php
-                                    $usr = $this->db
+                                    $builder = $this->db
                                         ->table("position")
                                         ->join("store", "store.store_id=position.store_id", "left")
                                         ->where("position.store_id",session()->get("store_id"))
-                                        ->where("position.position_administrator !=","1")
+                                        ->where("position.position_administrator !=","1");
+                                    if($user=="pekerja"){
+                                        $builder->where("position.position_loker","1");
+                                    }
+                                    if($user=="kantor"){
+                                        $builder->where("position.position_loker !=","1");
+                                    }
+                                    $usr = $builder
                                         ->orderBy("position_loker", "ASC")
                                         ->orderBy("position_name", "ASC")
                                         ->get();
@@ -143,10 +145,13 @@
                                                             && session()->get("halaman")['3']['act_update'] == "1"
                                                         )
                                                     ) { ?>
+                                                    
+                                                    <?php if($user=="kantor"){?>
                                                     <form method="get" class="btn-action" style="" action="<?= base_url("mpositionpages"); ?>">
                                                         <button class="btn btn-sm btn-primary "><span class="fa fa-check" style="color:white;"></span> </button>
                                                         <input type="hidden" name="position_id" value="<?= $usr->position_id; ?>" />
                                                     </form>
+                                                    <?php }?>
 
                                                     <form method="post" class="btn-action" style="">
                                                         <button class="btn btn-sm btn-warning " name="edit" value="OK"><span class="fa fa-edit" style="color:white;"></span> </button>

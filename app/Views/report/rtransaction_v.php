@@ -1,6 +1,6 @@
 <?php echo $this->include("template/header_v"); ?>
 
-<div class='container-fluid'>
+<div class='container-fluid'>    
     <div class='row'>
         <div class='col-12'>
             <div class="card">
@@ -60,8 +60,8 @@
                                         <th>Tanggal</th>
                                         <th>Toko</th>
                                         <th>No. Transaksi</th>
-                                        <th>Shift</th>
-                                        <th>Kasir</th>
+                                        <!-- <th>Shift</th>
+                                        <th>Kasir</th> -->
                                         <th>Produk</th>
                                         <th>Tagihan</th>
                                         <th>Bayar</th>
@@ -76,6 +76,7 @@
                                         ->join("store", "store.store_id=transaction.store_id", "left")
                                         ->join("(SELECT user_id as uid, user_name as penanggung FROM user)pending", "pending.uid=transaction.transaction_pending", "left")
                                         ->join("user", "user.user_id=transaction.cashier_id", "left")
+                                        ->join("member", "member.member_id=transaction.member_id", "left")
                                         ->where("transaction.store_id",session()->get("store_id"));
                                         
                                     if(session()->get("user_lapor")==1){
@@ -129,15 +130,31 @@
                                                     <?php }?>
                                                     <input type="hidden" name="transaction_id" value="<?= $usr->transaction_id; ?>" />
                                                 </form>
+                                                <?php if($usr->transaction_status==3){?>
+                                                    <form method="post" class="btn-action" style="" action="<?=base_url("transaction");?>">
+                                                        <button class="btn btn-sm btn-success " type="submit"><span class="fa fa-money" style="color:white;"></span> </button>
+                                                        <input type="hidden" name="transaction_id" value="<?= $usr->transaction_id; ?>" />
+                                                    </form>
+                                                <?php }?>
                                                 <?php }?>
                                             </td>
                                             <?php }?>                                        
                                             <td><a href="<?=base_url("rtransactiond?transaction_id=".$usr->transaction_id);?>" class="btn btn-xs btn-info"><span class="fa fa-cubes"></span> <?= $no++; ?></a></td>
-                                            <td><?= $usr->transaction_date; ?></td>
+                                            <td>                                                
+                                                <form class="form-horizontal" method="post" enctype="multipart/form-data">  
+                                                    <?php 
+                                                    $namabutton = 'name="change"';
+                                                    $judul = "Update Pembayaran";
+                                                    ?>
+                                                    <input name="transaction_date" type="date" value="<?= $usr->transaction_date; ?>"/>                                                    
+                                                    <input type="hidden" name="transaction_id" value="<?= $usr->transaction_id; ?>" /><br/>
+                                                    <button type="submit" id="submit" class="btn btn-primary col-md-12" <?= $namabutton; ?> value="OK">Submit</button>
+                                                </form>
+                                            </td>
                                             <td><?= $usr->store_name; ?></td>
                                             <td><?= $usr->transaction_no; ?></td>
-                                            <td><?= $usr->transaction_shift; ?></td>
-                                            <td><?= $usr->user_name; ?></td>
+                                            <!-- <td><?= $usr->transaction_shift; ?></td>
+                                            <td><?= $usr->user_name; ?></td> -->
                                             <td>
                                                 <?php $product=$this->db->table("transactiond")
                                                 ->join("product","product.product_id=transactiond.product_id","left")
@@ -151,12 +168,15 @@
                                             <td><?= number_format($usr->transaction_bill,0,".",","); $tbill+=$usr->transaction_bill;?></td>
                                             <td><?= number_format($usr->transaction_pay,0,".",","); $tpay+=$usr->transaction_pay;?></td>
                                             <td><?= number_format($usr->transaction_change,0,".",","); $tchange+=$usr->transaction_change; ?></td>
-                                            <td>
+                                            <td>                                                
                                                 <?php
-                                                $status=array("Sukses", "Batal","Pending Bill");
+                                                $status=array("Sukses", "Batal","Pending Bill","Pengajuan");
                                                 echo $status[$usr->transaction_status]; 
                                                 if($usr->transaction_status==2){
                                                     echo " : ".$usr->penanggung;
+                                                }
+                                                if($usr->transaction_status==3){
+                                                    echo " : ".$usr->member_name;
                                                 }
                                                 ?>
                                             </td>
@@ -171,8 +191,8 @@
                                             <td></td>
                                             <td></td>
                                             <td></td>
-                                            <td></td>
-                                            <td></td>
+                                            <!-- <td></td>
+                                            <td></td> -->
                                             <td class="text-right">Total&nbsp;</td>
                                             <td><?= number_format($tbill,0,".",","); ?></td>
                                             <td><?= number_format($tpay,0,".",","); ?></td>
